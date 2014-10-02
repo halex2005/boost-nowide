@@ -6,12 +6,14 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <nowide/system.hpp>
-#include <nowide/args.hpp>
-#include <nowide/cenv.hpp>
+#include <boost/nowide/system.hpp>
+#include <boost/nowide/args.hpp>
+#include <boost/nowide/cenv.hpp>
 #include <iostream>
 #include "test.hpp"
 #include <stdio.h>
+
+using namespace boost;
 
 int main(int argc,char **argv,char **env)
 {

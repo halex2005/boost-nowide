@@ -1,5 +1,5 @@
-#include <nowide/fstream.hpp>
-#include <nowide/cstdio.hpp>
+#include <boost/nowide/fstream.hpp>
+#include <boost/nowide/cstdio.hpp>
 #include <iostream>
 
 #include <iostream>
@@ -9,6 +9,7 @@
 #  pragma warning(disable : 4996)
 #endif
 
+using namespace boost;
 
 int main()
 {

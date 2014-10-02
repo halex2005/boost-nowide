@@ -1,7 +1,8 @@
-#include <nowide/iostream.hpp>
+#include <boost/nowide/iostream.hpp>
 
 #include "test.hpp"
 
+using namespace boost;
 
 int main(int argc,char **argv)
 {

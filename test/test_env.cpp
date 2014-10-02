@@ -6,7 +6,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <nowide/cenv.hpp>
+#include <boost/nowide/cenv.hpp>
 #include <iostream>
 #include "test.hpp"
 
@@ -18,6 +18,7 @@
 #  pragma warning(disable : 4996)
 #endif
 
+using namespace boost;
 
 int main()
 {

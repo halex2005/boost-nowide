@@ -6,7 +6,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <nowide/cstdio.hpp>
+#include <boost/nowide/cstdio.hpp>
 #include <iostream>
 #include <string.h>
 #include "test.hpp"
@@ -15,6 +15,7 @@
 #  pragma warning(disable : 4996)
 #endif
 
+using namespace boost;
 
 int main()
 {

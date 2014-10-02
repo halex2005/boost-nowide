@@ -6,10 +6,12 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <nowide/convert.hpp>
-#include <nowide/stackstring.hpp>
+#include <boost/nowide/convert.hpp>
+#include <boost/nowide/stackstring.hpp>
 #include "test.hpp"
 #include <iostream>
+
+using namespace boost;
 
 int main()
 {

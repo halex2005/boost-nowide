@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 2.6)
 
+project(boost-nowide)
+
 include_directories(.)
 enable_testing()
 
+add_definitions(-DBOOST_NOWIDE_NO_LIB)
 option(RUN_WITH_WINE        "Use wine to run tests" OFF)
-
 
 if(NOT LIBDIR)
     set(LIBDIR lib CACHE STRING "Library installation directory" FORCE)
@@ -37,7 +39,8 @@ foreach(TEST ${NOWIDE_TESTS})
     endif()
 endforeach()
 
-add_library(nowide-shared SHARED src/iostream.cpp)
+add_library(nowide-shared SHARED libs/nowide/src/iostream.cpp)
+set_target_properties(nowide-shared PROPERTIES COMPILE_DEFINITIONS BOOST_NOWIDE_DYN_LINK)
 set_target_properties(nowide-shared PROPERTIES
     VERSION 0.0.0
     SOVERSION 0
@@ -45,7 +48,7 @@ set_target_properties(nowide-shared PROPERTIES
     OUTPUT_NAME "nowide"
 )
 
-add_library(nowide-static STATIC src/iostream.cpp)
+add_library(nowide-static STATIC libs/nowide/src/iostream.cpp)
 set_target_properties(nowide-static PROPERTIES
     CLEAN_DIRECT_OUTPUT 1
     OUTPUT_NAME "nowide"
@@ -56,8 +59,7 @@ if(MSVC)
 endif()
 
 add_executable(test_iostream_shared test/test_iostream.cpp)
-set_target_properties(nowide-shared PROPERTIES COMPILE_DEFINITIONS DLL_EXPORT)
-set_target_properties(test_iostream_shared PROPERTIES COMPILE_DEFINITIONS DLL_EXPORT)
+set_target_properties(test_iostream_shared PROPERTIES COMPILE_DEFINITIONS BOOST_NOWIDE_DYN_LINK)
 target_link_libraries(test_iostream_shared nowide-shared)
 
 add_executable(test_iostream_static test/test_iostream.cpp)
