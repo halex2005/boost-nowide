@@ -3,6 +3,7 @@ compiler:
   - clang
   - gcc
 install:
+  - sudo apt-get install libboost-all-dev
 script:
   - mkdir tmp
   - pushd tmp
