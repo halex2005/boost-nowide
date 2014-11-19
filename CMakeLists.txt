@@ -39,31 +39,41 @@ foreach(TEST ${NOWIDE_TESTS})
     endif()
 endforeach()
 
-add_library(nowide-shared SHARED libs/nowide/src/iostream.cpp)
-set_target_properties(nowide-shared PROPERTIES COMPILE_DEFINITIONS BOOST_NOWIDE_DYN_LINK)
-set_target_properties(nowide-shared PROPERTIES
-    VERSION 0.0.0
-    SOVERSION 0
-    CLEAN_DIRECT_OUTPUT 1
-    OUTPUT_NAME "nowide"
-)
+set(OTHER_TESTS test_env_win test_env_proto)
 
-add_library(nowide-static STATIC libs/nowide/src/iostream.cpp)
-set_target_properties(nowide-static PROPERTIES
-    CLEAN_DIRECT_OUTPUT 1
-    OUTPUT_NAME "nowide"
-)
+# The library only has symbols on Windows, so only build on Windows.
+if(WIN32 OR RUN_WITH_WINE)
+    add_library(nowide-shared SHARED libs/nowide/src/iostream.cpp)
+    set_target_properties(nowide-shared PROPERTIES COMPILE_DEFINITIONS BOOST_NOWIDE_DYN_LINK)
+    set_target_properties(nowide-shared PROPERTIES
+        VERSION 0.0.0
+        SOVERSION 0
+        CLEAN_DIRECT_OUTPUT 1
+        OUTPUT_NAME "nowide"
+    )
 
-if(MSVC)
-    set_target_properties(nowide-static PROPERTIES PREFIX "lib")
+    add_library(nowide-static STATIC libs/nowide/src/iostream.cpp)
+    set_target_properties(nowide-static PROPERTIES
+        CLEAN_DIRECT_OUTPUT 1
+        OUTPUT_NAME "nowide"
+    )
+
+    if(MSVC)
+        set_target_properties(nowide-static PROPERTIES PREFIX "lib")
+    endif()
+
+    add_executable(test_iostream_shared test/test_iostream.cpp)
+    set_target_properties(test_iostream_shared PROPERTIES COMPILE_DEFINITIONS BOOST_NOWIDE_DYN_LINK)
+    target_link_libraries(test_iostream_shared nowide-shared)
+
+    add_executable(test_iostream_static test/test_iostream.cpp)
+    target_link_libraries(test_iostream_static nowide-static)
+
+    list(APPEND OTHER_TESTS test_iostream_shared test_iostream_static)
+else()
+    add_executable(test_iostream test/test_iostream.cpp)
+    list(APPEND OTHER_TESTS test_iostream)
 endif()
-
-add_executable(test_iostream_shared test/test_iostream.cpp)
-set_target_properties(test_iostream_shared PROPERTIES COMPILE_DEFINITIONS BOOST_NOWIDE_DYN_LINK)
-target_link_libraries(test_iostream_shared nowide-shared)
-
-add_executable(test_iostream_static test/test_iostream.cpp)
-target_link_libraries(test_iostream_static nowide-static)
 
 add_executable(test_system test/test_system.cpp)
 
@@ -71,8 +81,6 @@ add_executable(test_system test/test_system.cpp)
 add_executable(test_env_proto test/test_env.cpp)
 add_executable(test_env_win test/test_env.cpp)
 set_target_properties(test_env_win PROPERTIES COMPILE_DEFINITIONS NOWIDE_TEST_INCLUDE_WINDOWS)
-
-set(OTHER_TESTS test_iostream_shared test_iostream_static test_env_win test_env_proto)
 
 if(RUN_WITH_WINE)
     foreach(T ${OTHER_TESTS})
@@ -90,10 +98,14 @@ else()
     add_test(test_system_w test_system "-w")
 endif()
 
+if(WIN32 OR RUN_WITH_WINE)
 install(TARGETS nowide-shared nowide-static
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION ${LIBDIR}
     ARCHIVE DESTINATION ${LIBDIR})
+endif()
 
-install(DIRECTORY nowide DESTINATION include)
+# Install to include/boost/nowide. This essentially patches existing versions of Boost, and may conflict
+# with later versions if nowide is added to Boost.
+install(DIRECTORY boost DESTINATION include)
 
