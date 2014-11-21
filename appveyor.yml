@@ -25,4 +25,5 @@ install:
   - cd "%NOWIDE_ROOT%\tmp" && cmake .. -G %CMAKE_GENERATOR% %BOOST_DEFINITIONS%
   - dir "%NOWIDE_ROOT%\tmp"
 build:
-  project: c:\projects\boost-nowide\tmp\RUN_TESTS.vcxproj
+  - project: c:\projects\boost-nowide\tmp\boost-nowide.sln
+  - project: c:\projects\boost-nowide\tmp\RUN_TESTS.vcxproj
