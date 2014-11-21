@@ -38,7 +38,7 @@ foreach(TEST ${NOWIDE_TESTS})
     if(RUN_WITH_WINE)
        add_test(NAME ${TEST} WORKING_DIRECTORY ${CMAKE_BUILD_DIR} COMMAND wine ./${TEST}.exe)
     else()
-       add_test(${TEST} ${TEST})
+       add_test(NAME ${TEST} COMMAND ${TEST})
     endif()
 endforeach()
 
@@ -97,11 +97,11 @@ if(RUN_WITH_WINE)
     add_test(NAME test_system_w WORKING_DIRECTORY ${CMAKE_BUILD_DIR} COMMAND wine ./test_system.exe "-w")
 else()
     foreach(T ${OTHER_TESTS})
-        add_test(${T} ${T})
+        add_test(NAME ${T} COMMAND ${T})
     endforeach()
 
-    add_test(test_system_n test_system "-n")
-    add_test(test_system_w test_system "-w")
+    add_test(NAME test_system_n COMMAND test_system -n)
+    add_test(NAME test_system_w COMMAND test_system -w)
 endif()
 
 if(WIN32 OR RUN_WITH_WINE)
@@ -114,4 +114,3 @@ endif()
 # Install to include/boost/nowide. This essentially patches existing versions of Boost, and may conflict
 # with later versions if nowide is added to Boost.
 install(DIRECTORY boost DESTINATION include)
-
