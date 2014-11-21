@@ -8,6 +8,9 @@ enable_testing()
 add_definitions(-DBOOST_NOWIDE_NO_LIB)
 option(RUN_WITH_WINE        "Use wine to run tests" OFF)
 
+find_package(Boost 1.48 REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
+
 if(NOT LIBDIR)
     set(LIBDIR lib CACHE STRING "Library installation directory" FORCE)
 endif()
@@ -43,6 +46,9 @@ set(OTHER_TESTS test_env_win test_env_proto)
 
 # The library only has symbols on Windows, so only build on Windows.
 if(WIN32 OR RUN_WITH_WINE)
+    # Build tests with NOWIDE_WINDOWS enabled
+    add_definitions(-DNOWIDE_WINDOWS)
+
     add_library(nowide-shared SHARED libs/nowide/src/iostream.cpp)
     set_target_properties(nowide-shared PROPERTIES COMPILE_DEFINITIONS BOOST_NOWIDE_DYN_LINK)
     set_target_properties(nowide-shared PROPERTIES
