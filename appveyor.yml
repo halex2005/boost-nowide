@@ -26,4 +26,5 @@ install:
   - dir "%NOWIDE_ROOT%\tmp"
 build:
   project: c:\projects\boost-nowide\tmp\boost-nowide.sln
-  project: c:\projects\boost-nowide\tmp\RUN_TESTS.vcxproj
+test:
+  cd "%NOWIDE_ROOT%\tmp" && ctest
