@@ -7,6 +7,7 @@ enable_testing()
 
 add_definitions(-DBOOST_NOWIDE_NO_LIB)
 option(RUN_WITH_WINE        "Use wine to run tests" OFF)
+option(BOOST_NOWIDE_SKIP_TESTS    "Disable running tests" OFF)
 
 find_package(Boost 1.48 REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
@@ -33,16 +34,23 @@ set(NOWIDE_TESTS
     test_fstream
     )
 
-foreach(TEST ${NOWIDE_TESTS})
-    add_executable(${TEST} test/${TEST}.cpp)
-    if(RUN_WITH_WINE)
-       add_test(NAME ${TEST} WORKING_DIRECTORY ${CMAKE_BUILD_DIR} COMMAND wine ./${TEST}.exe)
-    else()
-       add_test(NAME ${TEST} COMMAND ${TEST})
-    endif()
-endforeach()
+if(NOT BOOST_NOWIDE_SKIP_TESTS)
+    foreach(TEST ${NOWIDE_TESTS})
+        add_executable(${TEST} test/${TEST}.cpp)
+        if(RUN_WITH_WINE)
+            add_test(NAME ${TEST} WORKING_DIRECTORY ${CMAKE_BUILD_DIR} COMMAND wine ./${TEST}.exe)
+        else()
+            add_test(NAME ${TEST} COMMAND ${TEST})
+        endif()
+    endforeach()
 
-set(OTHER_TESTS test_env_win test_env_proto)
+    set(OTHER_TESTS test_env_win test_env_proto)
+    add_executable(test_system test/test_system.cpp)
+
+    add_executable(test_env_proto test/test_env.cpp)
+    add_executable(test_env_win test/test_env.cpp)
+    set_target_properties(test_env_win PROPERTIES COMPILE_DEFINITIONS NOWIDE_TEST_INCLUDE_WINDOWS)
+endif()
 
 # The library only has symbols on Windows, so only build on Windows.
 if(WIN32 OR RUN_WITH_WINE)
@@ -56,59 +64,57 @@ if(WIN32 OR RUN_WITH_WINE)
         SOVERSION 0
         CLEAN_DIRECT_OUTPUT 1
         OUTPUT_NAME "nowide"
-    )
+        )
 
     add_library(nowide-static STATIC libs/nowide/src/iostream.cpp)
     set_target_properties(nowide-static PROPERTIES
         CLEAN_DIRECT_OUTPUT 1
         OUTPUT_NAME "nowide"
-    )
+        )
 
     if(MSVC)
         set_target_properties(nowide-static PROPERTIES PREFIX "lib")
     endif()
 
-    add_executable(test_iostream_shared test/test_iostream.cpp)
-    set_target_properties(test_iostream_shared PROPERTIES COMPILE_DEFINITIONS BOOST_NOWIDE_DYN_LINK)
-    target_link_libraries(test_iostream_shared nowide-shared)
+    if(NOT BOOST_NOWIDE_SKIP_TESTS)
+        add_executable(test_iostream_shared test/test_iostream.cpp)
+        set_target_properties(test_iostream_shared PROPERTIES COMPILE_DEFINITIONS BOOST_NOWIDE_DYN_LINK)
+        target_link_libraries(test_iostream_shared nowide-shared)
 
-    add_executable(test_iostream_static test/test_iostream.cpp)
-    target_link_libraries(test_iostream_static nowide-static)
+        add_executable(test_iostream_static test/test_iostream.cpp)
+        target_link_libraries(test_iostream_static nowide-static)
 
-    list(APPEND OTHER_TESTS test_iostream_shared test_iostream_static)
-else()
+        list(APPEND OTHER_TESTS test_iostream_shared test_iostream_static)
+    endif()
+elseif(NOT BOOST_NOWIDE_SKIP_TESTS)
     add_executable(test_iostream test/test_iostream.cpp)
     list(APPEND OTHER_TESTS test_iostream)
 endif()
 
-add_executable(test_system test/test_system.cpp)
 
+if(NOT BOOST_NOWIDE_SKIP_TESTS)
+    if(RUN_WITH_WINE)
+        foreach(T ${OTHER_TESTS})
+            add_test(NAME ${T} WORKING_DIRECTORY ${CMAKE_BUILD_DIR} COMMAND wine ./${T}.exe)
+        endforeach()
 
-add_executable(test_env_proto test/test_env.cpp)
-add_executable(test_env_win test/test_env.cpp)
-set_target_properties(test_env_win PROPERTIES COMPILE_DEFINITIONS NOWIDE_TEST_INCLUDE_WINDOWS)
+        add_test(NAME test_system_n WORKING_DIRECTORY ${CMAKE_BUILD_DIR} COMMAND wine ./test_system.exe "-n")
+        add_test(NAME test_system_w WORKING_DIRECTORY ${CMAKE_BUILD_DIR} COMMAND wine ./test_system.exe "-w")
+    else()
+        foreach(T ${OTHER_TESTS})
+            add_test(NAME ${T} COMMAND ${T})
+        endforeach()
 
-if(RUN_WITH_WINE)
-    foreach(T ${OTHER_TESTS})
-        add_test(NAME ${T} WORKING_DIRECTORY ${CMAKE_BUILD_DIR} COMMAND wine ./${T}.exe)
-    endforeach()
-
-    add_test(NAME test_system_n WORKING_DIRECTORY ${CMAKE_BUILD_DIR} COMMAND wine ./test_system.exe "-n")
-    add_test(NAME test_system_w WORKING_DIRECTORY ${CMAKE_BUILD_DIR} COMMAND wine ./test_system.exe "-w")
-else()
-    foreach(T ${OTHER_TESTS})
-        add_test(NAME ${T} COMMAND ${T})
-    endforeach()
-
-    add_test(NAME test_system_n COMMAND test_system -n)
-    add_test(NAME test_system_w COMMAND test_system -w)
+        add_test(NAME test_system_n COMMAND test_system -n)
+        add_test(NAME test_system_w COMMAND test_system -w)
+    endif()
 endif()
 
 if(WIN32 OR RUN_WITH_WINE)
-install(TARGETS nowide-shared nowide-static
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION ${LIBDIR}
-    ARCHIVE DESTINATION ${LIBDIR})
+    install(TARGETS nowide-shared nowide-static
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION ${LIBDIR}
+        ARCHIVE DESTINATION ${LIBDIR})
 endif()
 
 # Install to include/boost/nowide. This essentially patches existing versions of Boost, and may conflict
