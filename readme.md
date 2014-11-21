@@ -1,7 +1,9 @@
 Boost.Nowide
 ============
 
-[![Build Status](https://travis-ci.org/halex2005/boost-nowide.svg?branch=master)](https://travis-ci.org/halex2005/boost-nowide)
+Platform | Linux | Windows
+---------|-------|--------
+Build status | [![Build Status](https://travis-ci.org/halex2005/boost-nowide.svg?branch=master)](https://travis-ci.org/halex2005/boost-nowide) | [![Build status](https://ci.appveyor.com/api/projects/status/aiws63sj305to99g?svg=true)](https://ci.appveyor.com/project/halex2005/boost-nowide)
 
 This is unofficial fork of [Boost.Nowide by Artyom Beilis](http://cppcms.com/files/nowide/html/) from [sources](http://cppcms.com/files/nowide/) to GitHub.
 
