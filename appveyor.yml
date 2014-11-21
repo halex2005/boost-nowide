@@ -22,4 +22,4 @@ install:
 build:
   project: c:\projects\boost-nowide\tmp\boost-nowide.sln
 before_test:
-  - cd "%NOWIDE_ROOT%\tmp" && ctest
+  - cd "%NOWIDE_ROOT%\tmp" && ctest -C %Configuration%
