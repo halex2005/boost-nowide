@@ -24,5 +24,7 @@ install:
   - mkdir "%NOWIDE_ROOT%\tmp"
   - cd "%NOWIDE_ROOT%\tmp"
   - cmake .. -G %CMAKE_GENERATOR% %BOOST_DEFINITIONS%
-  - msbuild "c:\projects\boost-nowide\tmp\boost-nowide.sln" /t:ALL_BUILD /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-  - ctest
+build:
+  project: tmp\boost-nowide.sln
+test:
+  cd "%NOWIDE_ROOT%\tmp" && ctest
