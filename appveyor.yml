@@ -1,6 +1,7 @@
 version: 1.0.{build}
 skip_tags: true
 clone_folder: c:\projects\boost-nowide
+os: unstable
 environment:
   BOOST_ROOT: c:\Libraries\boost
   NOWIDE_ROOT: c:\projects\boost-nowide
