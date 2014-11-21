@@ -25,5 +25,5 @@ install:
   - cmake .. -G %CMAKE_GENERATOR% %BOOST_DEFINITIONS%
 build:
   project: c:\projects\boost-nowide\tmp\boost-nowide.sln
-test:
-  cd "%NOWIDE_ROOT%\tmp" && ctest
+before_test:
+  - cd "%NOWIDE_ROOT%\tmp" && ctest
