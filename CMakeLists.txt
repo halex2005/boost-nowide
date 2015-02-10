@@ -6,8 +6,9 @@ include_directories(.)
 enable_testing()
 
 add_definitions(-DBOOST_NOWIDE_NO_LIB)
-option(RUN_WITH_WINE        "Use wine to run tests" OFF)
+option(RUN_WITH_WINE              "Use wine to run tests" OFF)
 option(BOOST_NOWIDE_SKIP_TESTS    "Disable running tests" OFF)
+option(BOOST_NOWIDE_SKIP_INSTALL  "Disable installation"  OFF)
 
 find_package(Boost 1.48 REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
@@ -110,13 +111,15 @@ if(NOT BOOST_NOWIDE_SKIP_TESTS)
     endif()
 endif()
 
-if(WIN32 OR RUN_WITH_WINE)
-    install(TARGETS nowide-shared nowide-static
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION ${LIBDIR}
-        ARCHIVE DESTINATION ${LIBDIR})
-endif()
+if(NOT BOOST_NOWIDE_SKIP_INSTALL)
+    if(WIN32 OR RUN_WITH_WINE)
+        install(TARGETS nowide-shared nowide-static
+            RUNTIME DESTINATION bin
+            LIBRARY DESTINATION ${LIBDIR}
+            ARCHIVE DESTINATION ${LIBDIR})
+    endif()
 
-# Install to include/boost/nowide. This essentially patches existing versions of Boost, and may conflict
-# with later versions if nowide is added to Boost.
-install(DIRECTORY boost DESTINATION include)
+    # Install to include/boost/nowide. This essentially patches existing versions of Boost, and may conflict
+    # with later versions if nowide is added to Boost.
+    install(DIRECTORY boost DESTINATION include)
+endif()
