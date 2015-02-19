@@ -7,6 +7,8 @@ Build status | [![Build Status](https://travis-ci.org/halex2005/boost-nowide.svg
 
 This is unofficial fork of [Boost.Nowide by Artyom Beilis](http://cppcms.com/files/nowide/html/) from [sources](http://cppcms.com/files/nowide/) to GitHub.
 
+There is [doxygen-generated online documentation for Boost.Nowide](http://cppcms.com/files/nowide/html/).
+
 License
 -------
 
