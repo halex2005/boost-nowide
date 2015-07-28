@@ -67,11 +67,15 @@ if(WIN32 OR RUN_WITH_WINE)
         OUTPUT_NAME "nowide"
         )
 
+    set_target_properties (nowide-shared PROPERTIES DEBUG_POSTFIX "-d")
+
     add_library(nowide-static STATIC libs/nowide/src/iostream.cpp)
     set_target_properties(nowide-static PROPERTIES
         CLEAN_DIRECT_OUTPUT 1
         OUTPUT_NAME "nowide"
         )
+
+    set_target_properties (nowide-static PROPERTIES DEBUG_POSTFIX "-d")
 
     if(MSVC)
         set_target_properties(nowide-static PROPERTIES PREFIX "lib")
